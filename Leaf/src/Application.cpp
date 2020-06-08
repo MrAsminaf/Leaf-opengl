@@ -65,15 +65,15 @@ void MouseCallback(GLFWwindow* window, double xPos, double yPos)
 {
 	if (firstMouse)
 	{
-		lastX = xPos;
-		lastY = yPos;
+		lastX = float(xPos);
+		lastY = float(yPos);
 		firstMouse = false;
 	}
 	float xOffset = float(xPos) - lastX;
 	float yOffset = float(yPos) - lastY;
 
-	lastX = xPos;
-	lastY = yPos;
+	lastX = float(xPos);
+	lastY = float(yPos);
 
 	float sensitivity = 0.1f;
 	xOffset *= sensitivity;
@@ -122,6 +122,7 @@ int CheckShaderCompilationStatus(GLuint shader)
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 		return -1;
 	}
+	return 0;
 }
 
 int CheckShaderProgramLinkingStatus(GLuint program)
@@ -135,6 +136,7 @@ int CheckShaderProgramLinkingStatus(GLuint program)
 		std::cout << "Shader Program linking error" << std::endl;
 		return -1;
 	}
+	return 0;
 }
 
 int main()
@@ -262,8 +264,8 @@ int main()
 	while (!glfwWindowShouldClose(window))
 	{
 		auto current_frame = glfwGetTime();
-		delta_time = last_frame - current_frame;
-		last_frame = current_frame;
+		delta_time = last_frame - float(current_frame);
+		last_frame = float(current_frame);
 
 		ProcessInput(window);
 
