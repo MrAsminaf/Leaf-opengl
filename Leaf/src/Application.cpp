@@ -248,7 +248,7 @@ int main()
 	glBindTexture(GL_TEXTURE_2D, soilTexture);
 
 	int width, height, nrChannels;
-	unsigned char* data = stbi_load("soil.jpg", &width, &height, &nrChannels, 0);
+	unsigned char* data = stbi_load("assets/soil.jpg", &width, &height, &nrChannels, 0);
 	if (!data)
 	{
 		std::cout << "Failed to load texture" << std::endl;
