@@ -44,18 +44,28 @@ void main()
 }
 )";
 
+// current camera position in 3D space
 static glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+
+// direction vector
 static glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+
+// up vector
 static glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 static float delta_time;
 static float last_frame;
 
+// variables for Euler angles
 static float pitch;
 static float yaw = -90.0f;
-static float lastX;
-static float lastY;
 
+// mouse positions from last frame relative to glfw Window
+static float lastXPos;
+static float lastYPos;
+
+// check if user has clicked previously on glfw Window; this is to prevent snapping
+// when entering glfw window for the first time during execution
 static bool firstMouse = true;
 
 void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
@@ -67,17 +77,17 @@ void MouseCallback(GLFWwindow* window, double xPos, double yPos)
 {
 	if (firstMouse)
 	{
-		lastX = float(xPos);
-		lastY = float(yPos);
+		lastXPos = float(xPos);
+		lastYPos = float(yPos);
 		firstMouse = false;
 	}
-	float xOffset = float(xPos) - lastX;
-	float yOffset = float(yPos) - lastY;
+	float xOffset = float(xPos) - lastXPos;
+	float yOffset = float(yPos) - lastYPos;
 
-	lastX = float(xPos);
-	lastY = float(yPos);
+	lastXPos = float(xPos);
+	lastYPos = float(yPos);
 
-	float sensitivity = 0.1f;
+	const float sensitivity = 0.1f;
 	xOffset *= sensitivity;
 	yOffset *= sensitivity;
 
@@ -114,6 +124,7 @@ void ProcessInput(GLFWwindow* window)
 
 int main()
 {
+	// init glfw variables
 	glfwInit();
 	glfwInitHint(GLFW_VERSION_MAJOR, 3);
 	glfwInitHint(GLFW_VERSION_MINOR, 3);
@@ -141,7 +152,9 @@ int main()
 
 	ShaderProgram shaderProgram(vertexShaderSource, fragmentShaderSource);
 
+	// all cube vertices
 	float vertices[] = {
+//       xpos,  ypos,  zpos,  texX, texY      
 		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
 		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
