@@ -3,10 +3,10 @@
 Leaf Engine is an early-stage educational project and rendering engine made in C++
 
 ## Cloning
-Make sure to use ```--recursive``` :
+Make sure to use ```--recurse``` :
 
 ```git
-git clone --recursive https://github.com/MrAsminaf/Leaf.git
+git clone --recurse https://github.com/MrAsminaf/Leaf.git
 ```
  to ensure all submodules are installed!
 
