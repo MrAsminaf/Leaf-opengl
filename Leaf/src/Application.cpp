@@ -11,6 +11,7 @@
 #include <iostream>
 
 #include "ShaderProgram.h"
+#include "Camera.h"
 
 const char* vertexShaderSource = R"(
 #version 330 core
@@ -44,21 +45,10 @@ void main()
 }
 )";
 
-// current camera position in 3D space
-static glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-
-// direction vector
-static glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-
-// up vector
-static glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+static Camera camera;
 
 static float delta_time;
 static float last_frame;
-
-// variables for Euler angles
-static float pitch;
-static float yaw = -90.0f;
 
 // mouse positions from last frame relative to glfw Window
 static float lastXPos;
@@ -91,19 +81,21 @@ void MouseCallback(GLFWwindow* window, double xPos, double yPos)
 	xOffset *= sensitivity;
 	yOffset *= sensitivity;
 
-	pitch += yOffset;
-	yaw += xOffset;
+	//pitch += yOffset;
+	//yaw += xOffset;
+	camera.SetPitch(camera.GetPitch() + yOffset);
+	camera.SetYaw(camera.GetYaw() + xOffset);
 
-	if (pitch > 89.9f)
-		pitch = 89.9f;
-	if (pitch < -89.9f)
-		pitch = -89.9f;
+	if (camera.GetPitch() > 89.9f)
+		camera.SetPitch(89.9f);
+	if (camera.GetPitch() < -89.9f)
+		camera.SetPitch(-89.9f);
 
 	glm::vec3 direction;
-	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	direction.y = sin(glm::radians(-pitch));
-	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraFront = glm::normalize(direction);
+	direction.x = cos(glm::radians(camera.GetYaw())) * cos(glm::radians(camera.GetPitch()));
+	direction.y = sin(glm::radians(-camera.GetPitch()));
+	direction.z = sin(glm::radians(camera.GetYaw())) * cos(glm::radians(camera.GetPitch()));
+	camera.SetFront(glm::normalize(direction));
 }
 
 void ProcessInput(GLFWwindow* window)
@@ -113,13 +105,13 @@ void ProcessInput(GLFWwindow* window)
 
 	const float cameraSpeed = 2.5f * delta_time;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		cameraPos -= cameraFront * cameraSpeed;
+		camera.SetPosition(camera.GetPosition() - camera.GetFront() * cameraSpeed);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		cameraPos += cameraFront * cameraSpeed;
+		camera.SetPosition(camera.GetPosition() + camera.GetFront() * cameraSpeed);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		camera.SetPosition(camera.GetPosition() - glm::normalize(glm::cross(camera.GetFront(), camera.GetUp())) * cameraSpeed);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		camera.SetPosition(camera.GetPosition() + glm::normalize(glm::cross(camera.GetFront(), camera.GetUp())) * cameraSpeed);
 }
 
 int main()
@@ -243,7 +235,7 @@ int main()
 		model = glm::rotate(model, glm::radians(1.f), glm::vec3(0.7f, 0.3f, 0.4f));
 
 		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		view = glm::lookAt(camera.GetPosition(), camera.GetPosition() + camera.GetFront(), camera.GetUp());
 
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);

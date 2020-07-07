@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(GLAD_SOURCES "leaf/src/glad/glad.c")
 set(SRC_SOURCES "leaf/src/application.cpp" "leaf/src/ShaderProgram.h"
-"leaf/src/ShaderProgram.cpp")
+"leaf/src/ShaderProgram.cpp" "leaf/src/Camera.h" "leaf/src/Camera.cpp")
 set(STB_SOURCES "leaf/src/stb/stb_image.h")
 
 add_subdirectory(include/GLFW)
